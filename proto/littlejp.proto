@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+message Empty{}
+
+message StatusReply {
+  float amount = 1;
+}
+
+message ThrowRequest {
+  float amount = 1;
+}
+
+message ThrowReply {
+  float amount = 1;
+  bool is_winner = 2;
+}
+
+message WinnerRecoard {
+  string winner = 1;
+  float amount = 2;
+  google.protobuf.Timestamp win_at = 3;
+}
+
+message WinnerHistory {
+  repeated WinnerRecoard recoreds = 1;
+}
+
+
+service JPService {
+  rpc GetStatus (Empty) returns (StatusReply) {}
+  rpc Throw (ThrowRequest) returns (ThrowReply) {}
+  rpc GetWinnerHistory (Empty) returns (WinnerHistory) {}
+}
