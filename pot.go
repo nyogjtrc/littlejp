@@ -22,7 +22,7 @@ type PotConfig struct {
 
 type Pot struct {
 	Config  PotConfig
-	Amount  float32
+	Amount  float64
 	History []WinnerRecoard
 }
 
@@ -35,7 +35,7 @@ func (p *Pot) IsWinner() bool {
 	return false
 }
 
-func (p *Pot) TakeMoney() float32 {
+func (p *Pot) TakeMoney() float64 {
 	amount := p.Amount
 	p.Amount -= amount
 	return amount

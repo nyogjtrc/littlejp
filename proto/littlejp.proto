@@ -7,21 +7,23 @@ import "google/protobuf/timestamp.proto";
 message Empty{}
 
 message StatusReply {
-  float amount = 1;
+  double amount = 1;
 }
 
 message ThrowRequest {
-  float amount = 1;
+  uint64 user_id = 1;
+  double amount = 2;
 }
 
 message ThrowReply {
-  float amount = 1;
-  bool is_winner = 2;
+  uint64 user_id = 1;
+  double amount = 2;
+  bool is_winner = 3;
 }
 
 message WinnerRecoard {
-  string winner = 1;
-  float amount = 2;
+  uint64 user_id = 1;
+  double amount = 2;
   google.protobuf.Timestamp win_at = 3;
 }
 
@@ -32,6 +34,7 @@ message WinnerHistory {
 
 service JPService {
   rpc GetStatus (Empty) returns (StatusReply) {}
-  rpc Throw (ThrowRequest) returns (ThrowReply) {}
-  rpc GetWinnerHistory (Empty) returns (WinnerHistory) {}
+  rpc ThrowMoney (ThrowRequest) returns (ThrowReply) {}
+  rpc Latest10Winner (Empty) returns (WinnerHistory) {}
+  rpc Top10Winner(Empty) returns (WinnerHistory) {}
 }

@@ -24,7 +24,7 @@ func throw(conn *grpc.ClientConn) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	reply, err := c.Throw(ctx, &pb.ThrowRequest{Amount: 1})
+	reply, err := c.ThrowMoney(ctx, &pb.ThrowRequest{Amount: 1})
 	if err != nil {
 		panic(err)
 	}

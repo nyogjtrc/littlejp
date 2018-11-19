@@ -28,7 +28,7 @@ func (s *Server) GetStatus(c context.Context, req *pb.Empty) (*pb.StatusReply, e
 	return reply, nil
 }
 
-func (s *Server) Throw(c context.Context, req *pb.ThrowRequest) (*pb.ThrowReply, error) {
+func (s *Server) ThrowMoney(c context.Context, req *pb.ThrowRequest) (*pb.ThrowReply, error) {
 	s.Pot.Amount += req.Amount
 	reply := pb.ThrowReply{}
 
@@ -43,7 +43,11 @@ func (s *Server) Throw(c context.Context, req *pb.ThrowRequest) (*pb.ThrowReply,
 	return &reply, nil
 }
 
-func (s *Server) GetWinnerHistory(c context.Context, req *pb.Empty) (*pb.WinnerHistory, error) {
+func (s *Server) Latest10Winner(c context.Context, req *pb.Empty) (*pb.WinnerHistory, error) {
 	reply := new(pb.WinnerHistory)
 	return reply, nil
+}
+
+func (s *Server) Top10Winner(c context.Context, req *pb.Empty) (*pb.WinnerHistory, error) {
+	return nil, nil
 }
