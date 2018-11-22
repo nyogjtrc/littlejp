@@ -29,5 +29,9 @@ func TestThrowMoney(t *testing.T) {
 		t.Log(err)
 	}
 
-	assert.Equal(t, amount, statusReply.Amount)
+	if throwReply.IsWinner {
+		assert.Equal(t, 0, statusReply.Amount)
+	} else {
+		assert.Equal(t, amount, statusReply.Amount)
+	}
 }

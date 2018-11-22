@@ -1,6 +1,8 @@
 package littlejp
 
-import "time"
+import (
+	"time"
+)
 
 // transaction opcode
 const (

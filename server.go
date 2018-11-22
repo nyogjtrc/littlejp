@@ -2,6 +2,8 @@ package littlejp
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	pb "github.com/nyogjtrc/littlejp/proto"
 )
@@ -17,7 +19,7 @@ func NewServer() *Server {
 	s := new(Server)
 	s.Pot = Pot{
 		Config: PotConfig{
-			ProbabilityBase: 1000,
+			ProbabilityBase: 10,
 		},
 	}
 	return s
@@ -30,17 +32,28 @@ func (s *Server) GetStatus(c context.Context, req *pb.Empty) (*pb.StatusReply, e
 }
 
 func (s *Server) ThrowMoney(c context.Context, req *pb.ThrowRequest) (*pb.ThrowReply, error) {
+	if req.Amount <= 0 {
+		return nil, errors.New("amount should be greater than 0")
+	}
+
+	s.Pot.CreateThrowRecord(req.UserId, req.Amount, "")
+
 	record, err := s.wallet.Transaction(OpCashIn, req.Amount)
 	if err != nil {
 		return nil, err
 	}
+
 	reply := pb.ThrowReply{}
 	reply.Amount = record.Balance
+	reply.IsWinner = s.Pot.IsWinner()
 
-	if s.Pot.IsWinner() {
-		reply.IsWinner = true
-	} else {
-		reply.IsWinner = false
+	if reply.IsWinner {
+		s.Pot.CreateWinnerRecord(req.UserId, record.Balance)
+		winTR, err := s.wallet.Transaction(OpCashOut, -1*record.Balance)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("winner:", req.UserId, winTR)
 	}
 
 	return &reply, nil
