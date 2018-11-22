@@ -8,7 +8,8 @@ import (
 
 // Server little jp
 type Server struct {
-	Pot Pot
+	Pot    Pot
+	wallet JackpotWallet
 }
 
 // NewServer creatre Server instance
@@ -24,19 +25,21 @@ func NewServer() *Server {
 
 func (s *Server) GetStatus(c context.Context, req *pb.Empty) (*pb.StatusReply, error) {
 	reply := new(pb.StatusReply)
-	reply.Amount = s.Pot.Amount
+	reply.Amount = s.wallet.GetBalance()
 	return reply, nil
 }
 
 func (s *Server) ThrowMoney(c context.Context, req *pb.ThrowRequest) (*pb.ThrowReply, error) {
-	s.Pot.Amount += req.Amount
+	record, err := s.wallet.Transaction(OpCashIn, req.Amount)
+	if err != nil {
+		return nil, err
+	}
 	reply := pb.ThrowReply{}
+	reply.Amount = record.Balance
 
 	if s.Pot.IsWinner() {
-		reply.Amount = s.Pot.TakeMoney()
 		reply.IsWinner = true
 	} else {
-		reply.Amount = s.Pot.Amount
 		reply.IsWinner = false
 	}
 

@@ -25,6 +25,11 @@ type JackpotWallet struct {
 	Balance float64
 }
 
+// GetBalance of JackpotWallet
+func (w *JackpotWallet) GetBalance() float64 {
+	return w.Balance
+}
+
 // Transaction with jackpot wallet
 func (w *JackpotWallet) Transaction(opcode uint, amount float64) (TransactionRecord, error) {
 	r := TransactionRecord{}
