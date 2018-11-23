@@ -10,13 +10,43 @@ import (
 	"google.golang.org/grpc"
 )
 
+func printCmdUsage() {
+	fmt.Println("please use right cmd")
+}
+
 func main() {
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
 
-	throwForever(conn)
+	if len(os.Args) == 1 {
+		printCmdUsage()
+		os.Exit(1)
+	}
+
+	handlefunc := cmdRouter(os.Args[1])
+	if handlefunc != nil {
+		handlefunc(conn)
+	}
+}
+
+func cmdRouter(cmd string) func(*grpc.ClientConn) {
+	switch cmd {
+	case "throw":
+		return throw
+	case "throws":
+		return throwForever
+	case "status":
+		return getStatus
+	case "latest10":
+		return latest10
+	case "top10":
+		return top10
+	default:
+		printCmdUsage()
+		return nil
+	}
 }
 
 func throw(conn *grpc.ClientConn) {
@@ -41,4 +71,43 @@ func throwForever(conn *grpc.ClientConn) {
 		throw(conn)
 		time.Sleep(100 * time.Millisecond)
 	}
+}
+
+func getStatus(conn *grpc.ClientConn) {
+	c := pb.NewJPServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	reply, err := c.GetStatus(ctx, &pb.Empty{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(reply)
+}
+
+func latest10(conn *grpc.ClientConn) {
+	c := pb.NewJPServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	reply, err := c.Latest10Winner(ctx, &pb.Empty{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(reply)
+}
+
+func top10(conn *grpc.ClientConn) {
+	c := pb.NewJPServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	reply, err := c.Top10Winner(ctx, &pb.Empty{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(reply)
 }
