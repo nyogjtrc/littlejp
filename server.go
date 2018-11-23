@@ -61,9 +61,22 @@ func (s *Server) ThrowMoney(c context.Context, req *pb.ThrowRequest) (*pb.ThrowR
 
 func (s *Server) Latest10Winner(c context.Context, req *pb.Empty) (*pb.WinnerHistory, error) {
 	reply := new(pb.WinnerHistory)
+	for _, rec := range s.Pot.Latest10Winner() {
+		reply.Recoreds = append(reply.Recoreds, &pb.WinnerRecoard{
+			UserId: rec.UserID,
+			Amount: rec.Amount,
+		})
+	}
 	return reply, nil
 }
 
 func (s *Server) Top10Winner(c context.Context, req *pb.Empty) (*pb.WinnerHistory, error) {
-	return nil, nil
+	reply := new(pb.WinnerHistory)
+	for _, rec := range s.Pot.Top10Winner() {
+		reply.Recoreds = append(reply.Recoreds, &pb.WinnerRecoard{
+			UserId: rec.UserID,
+			Amount: rec.Amount,
+		})
+	}
+	return reply, nil
 }

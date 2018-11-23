@@ -57,3 +57,33 @@ func (p *Pot) CreateWinnerRecord(userid uint64, amount float64) {
 		WinAt:  time.Now(),
 	})
 }
+
+func (p *Pot) Latest10Winner() []WinnerRecoard {
+	if len(p.WinnerRecoards) > 10 {
+		return p.WinnerRecoards[len(p.WinnerRecoards)-10:]
+	}
+	return p.WinnerRecoards
+}
+
+func (p *Pot) Top10Winner() []WinnerRecoard {
+	sortedRecords := make([]WinnerRecoard, 0)
+
+	for _, rec := range p.WinnerRecoards {
+		position := len(sortedRecords)
+		for i, sortedRec := range sortedRecords {
+			if rec.Amount > sortedRec.Amount {
+				position = i
+				break
+			}
+		}
+
+		sortedRecords = append(sortedRecords, WinnerRecoard{})
+		copy(sortedRecords[position+1:], sortedRecords[position:])
+		sortedRecords[position] = rec
+	}
+
+	if len(sortedRecords) > 10 {
+		return sortedRecords[:10]
+	}
+	return sortedRecords
+}

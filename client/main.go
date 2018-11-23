@@ -3,12 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os"
 	"time"
 
 	pb "github.com/nyogjtrc/littlejp/proto"
 	"google.golang.org/grpc"
 )
+
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
 
 func printCmdUsage() {
 	fmt.Println("please use right cmd")
@@ -54,7 +59,7 @@ func throw(conn *grpc.ClientConn) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	reply, err := c.ThrowMoney(ctx, &pb.ThrowRequest{Amount: 1})
+	reply, err := c.ThrowMoney(ctx, &pb.ThrowRequest{UserId: uint64(rand.Intn(100)), Amount: 1})
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +101,10 @@ func latest10(conn *grpc.ClientConn) {
 		panic(err)
 	}
 
-	fmt.Println(reply)
+	for i := range reply.Recoreds {
+		fmt.Println(i, reply.Recoreds[i])
+	}
+
 }
 
 func top10(conn *grpc.ClientConn) {
@@ -109,5 +117,8 @@ func top10(conn *grpc.ClientConn) {
 		panic(err)
 	}
 
-	fmt.Println(reply)
+	for i := range reply.Recoreds {
+		fmt.Println(i, reply.Recoreds[i])
+	}
+
 }

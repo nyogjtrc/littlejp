@@ -30,7 +30,7 @@ func TestThrowMoney(t *testing.T) {
 	}
 
 	if throwReply.IsWinner {
-		assert.Equal(t, 0, statusReply.Amount)
+		assert.Equal(t, 0.0, statusReply.Amount)
 	} else {
 		assert.Equal(t, amount, statusReply.Amount)
 	}
